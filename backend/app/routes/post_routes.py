@@ -1,10 +1,20 @@
 from flask import Blueprint, request, jsonify
-from app.config.db import get_connection
+from app.services.post_service import (
+    create_post,
+    get_all_posts,
+    get_post_by_id,
+    update_post,
+    delete_post
+)
 
 post_bp = Blueprint("posts", __name__)
 
+
+# ======================
+# CREATE
+# ======================
 @post_bp.route("/posts", methods=["POST"])
-def create_post():
+def create():
     data = request.get_json()
 
     user_id = data.get("user_id")
@@ -14,32 +24,60 @@ def create_post():
     if not all([user_id, content, platform]):
         return jsonify({"error": "Faltan campos obligatorios"}), 400
 
-    try:
-        conn = get_connection()
-        with conn.cursor() as cursor:
-            sql = """
-                INSERT INTO posts (user_id, content, platform)
-                VALUES (%s, %s, %s)
-            """
-            cursor.execute(sql, (user_id, content, platform))
-            conn.commit()
+    create_post(user_id, content, platform)
+    return jsonify({"message": "Post creado correctamente"}), 201
 
-        conn.close()
-        return jsonify({"message": "Post creado correctamente"}), 201
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+# ======================
+# READ ALL
+# ======================
 @post_bp.route("/posts", methods=["GET"])
-def get_posts():
-    try:
-        conn = get_connection()
-        with conn.cursor() as cursor:
-            sql = "SELECT * FROM posts"
-            cursor.execute(sql)
-            posts = cursor.fetchall()
+def get_all():
+    posts = get_all_posts()
+    return jsonify(posts), 200
 
-        conn.close()
-        return jsonify(posts), 200
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+# ======================
+# READ ONE
+# ======================
+@post_bp.route("/posts/<int:post_id>", methods=["GET"])
+def get_one(post_id):
+    post = get_post_by_id(post_id)
+
+    if not post:
+        return jsonify({"error": "Post no encontrado"}), 404
+
+    return jsonify(post), 200
+
+
+# ======================
+# UPDATE
+# ======================
+@post_bp.route("/posts/<int:post_id>", methods=["PUT"])
+def update(post_id):
+    data = request.get_json()
+    content = data.get("content")
+    platform = data.get("platform")
+
+    if not all([content, platform]):
+        return jsonify({"error": "Faltan campos"}), 400
+
+    post = get_post_by_id(post_id)
+    if not post:
+        return jsonify({"error": "Post no encontrado"}), 404
+
+    update_post(post_id, content, platform)
+    return jsonify({"message": "Post actualizado correctamente"}), 200
+
+
+# ======================
+# DELETE
+# ======================
+@post_bp.route("/posts/<int:post_id>", methods=["DELETE"])
+def delete(post_id):
+    post = get_post_by_id(post_id)
+    if not post:
+        return jsonify({"error": "Post no encontrado"}), 404
+
+    delete_post(post_id)
+    return jsonify({"message": "Post eliminado correctamente"}), 200
