@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from app.services.metrics_service import get_post_analysis
 from app.services.post_service import (
     create_post,
     get_all_posts,
@@ -81,3 +82,16 @@ def delete(post_id):
 
     delete_post(post_id)
     return jsonify({"message": "Post eliminado correctamente"}), 200
+
+@post_bp.route("/posts/<int:post_id>/analysis", methods=["GET"])
+def analysis(post_id):
+    try:
+        result = get_post_analysis(post_id)
+
+        if not result:
+            return jsonify({"error": "Post no encontrado"}), 404
+
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
