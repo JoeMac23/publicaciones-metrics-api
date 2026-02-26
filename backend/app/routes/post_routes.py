@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from app.services.metrics_service import get_post_analysis
+from app.services.metrics_service import get_metrics_history_by_post
 from app.services.post_service import (
     create_post,
     get_all_posts,
@@ -92,6 +93,23 @@ def analysis(post_id):
             return jsonify({"error": "Post no encontrado"}), 404
 
         return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@post_bp.route("/posts/<int:post_id>/metrics/history", methods=["GET"])
+def metrics_history(post_id):
+    try:
+        post = get_post_by_id(post_id)
+        if not post:
+            return jsonify({"error": "Post no encontrado"}), 404
+
+        history = get_metrics_history_by_post(post_id)
+
+        return jsonify({
+            "post_id": post_id,
+            "history": history
+        }), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

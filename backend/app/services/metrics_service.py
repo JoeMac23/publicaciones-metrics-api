@@ -88,3 +88,24 @@ def get_post_analysis(post_id):
             "score": score
         }
     }
+    
+def get_metrics_history_by_post(post_id):
+    conn = get_connection()
+
+    try:
+        with conn.cursor() as cursor:
+            query = """
+                SELECT
+                    recorded_at,
+                    likes,
+                    comments,
+                    shares
+                FROM metrics
+                WHERE post_id = %s
+                ORDER BY recorded_at ASC
+            """
+            cursor.execute(query, (post_id,))
+            return cursor.fetchall()
+
+    finally:
+        conn.close()
