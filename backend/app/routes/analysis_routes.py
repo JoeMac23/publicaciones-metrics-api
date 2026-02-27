@@ -1,17 +1,22 @@
 from flask import Blueprint, jsonify
-from app.services.analysis_service import analyze_post_with_regression
+from app.services.analysis_service import (
+    analyze_post_with_regression,
+    save_analysis_result
+)
 
 analysis_bp = Blueprint("analysis", __name__)
 
-@analysis_bp.route("/analysis/<int:post_id>/regression", methods=["GET"])
-def regression(post_id):
-    try:
-        result = analyze_post_with_regression(post_id)
+@analysis_bp.route("/posts/<int:post_id>/analysis", methods=["GET"])
+def analyze(post_id):
+    result = analyze_post_with_regression(post_id)
 
-        if not result:
-            return jsonify({"error": "No hay suficientes métricas"}), 400
+    if not result:
+        return jsonify({"error": "No hay suficientes métricas"}), 400
 
-        return jsonify(result), 200
+    # 👇 NUEVO: guardar resultado
+    save_analysis_result(
+        post_id=post_id,
+        score=result["predicted_score"]
+    )
 
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify(result), 200
