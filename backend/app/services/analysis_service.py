@@ -59,3 +59,22 @@ def get_analysis_by_post(post_id):
 
     conn.close()
     return [dict(zip(columns, row)) for row in rows]
+
+def get_analysis_history(post_id):
+    conn = get_connection()
+    with conn.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT score, model_version, created_at
+            FROM post_analysis
+            WHERE post_id = %s
+            ORDER BY created_at ASC
+            """,
+            (post_id,)
+        )
+        rows = cursor.fetchall()
+        columns = [col[0] for col in cursor.description]
+
+    conn.close()
+
+    return [dict(zip(columns, row)) for row in rows]
