@@ -40,6 +40,25 @@ def create():
 # ======================
 @post_bp.route("/posts", methods=["GET"])
 def get_all():
+    """
+    Obtener todos los posts
+    ---
+    tags:
+      - Posts
+    responses:
+      200:
+        description: Lista de posts
+        examples:
+          application/json:
+            success: true
+            data:
+              - id_posts: 1
+                user_id: 1
+                content: "Post de ejemplo"
+                platform: "facebook"
+                created_at: "2026-02-25T09:03:14"
+            error: null
+    """
     posts = get_all_posts()
     return jsonify({
         "success": True,
