@@ -13,7 +13,7 @@ post_bp = Blueprint("posts", __name__)
 
 
 # ======================
-# CREATE
+# CREATE POST
 # ======================
 @post_bp.route("/posts", methods=["POST"])
 def create():
@@ -27,33 +27,50 @@ def create():
         return jsonify({"error": "Faltan campos obligatorios"}), 400
 
     create_post(user_id, content, platform)
-    return jsonify({"message": "Post creado correctamente"}), 201
-
+    return jsonify({
+        "success": True,
+        "data": {
+            "message": "Post creado correctamente"
+        },
+        "error": None
+    }), 201
 
 # ======================
-# READ ALL
+# GET ALL POSTS
 # ======================
 @post_bp.route("/posts", methods=["GET"])
 def get_all():
     posts = get_all_posts()
-    return jsonify(posts), 200
+    return jsonify({
+        "success": True,
+        "data": posts,
+        "error": None
+    }), 200
 
 
 # ======================
-# READ ONE
+# GET ONE POST
 # ======================
 @post_bp.route("/posts/<int:post_id>", methods=["GET"])
 def get_one(post_id):
     post = get_post_by_id(post_id)
 
     if not post:
-        return jsonify({"error": "Post no encontrado"}), 404
+        return jsonify({
+            "success": False,
+            "data": None,
+            "error": "Post no encontrado"
+        }), 404
 
-    return jsonify(post), 200
+    return jsonify({
+        "success": True,
+        "data": post,
+        "error": None
+    }), 200
 
 
 # ======================
-# UPDATE
+# UPDATE POST
 # ======================
 @post_bp.route("/posts/<int:post_id>", methods=["PUT"])
 def update(post_id):
@@ -69,11 +86,17 @@ def update(post_id):
         return jsonify({"error": "Post no encontrado"}), 404
 
     update_post(post_id, content, platform)
-    return jsonify({"message": "Post actualizado correctamente"}), 200
+    return jsonify({
+        "success": True,
+        "data": {
+            "message": "Post actualizado correctamente"
+        },
+        "error": None
+    }), 200
 
 
 # ======================
-# DELETE
+# DELETE POST
 # ======================
 @post_bp.route("/posts/<int:post_id>", methods=["DELETE"])
 def delete(post_id):
@@ -84,6 +107,9 @@ def delete(post_id):
     delete_post(post_id)
     return jsonify({"message": "Post eliminado correctamente"}), 200
 
+# ======================
+# POST ANALYSIS
+# ======================
 @post_bp.route("/posts/<int:post_id>/analysis", methods=["GET"])
 def analysis(post_id):
     try:
@@ -92,11 +118,18 @@ def analysis(post_id):
         if not result:
             return jsonify({"error": "Post no encontrado"}), 404
 
-        return jsonify(result), 200
+        return jsonify({
+            "success": True,
+            "data": result,
+            "error": None
+        }), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ======================
+# METRICS HISTORY
+# ======================
 @post_bp.route("/posts/<int:post_id>/metrics/history", methods=["GET"])
 def metrics_history(post_id):
     try:
@@ -107,8 +140,12 @@ def metrics_history(post_id):
         history = get_metrics_history_by_post(post_id)
 
         return jsonify({
-            "post_id": post_id,
-            "history": history
+            "success": True,
+            "data": {
+                "post_id": post_id,
+                "history": history
+            },
+            "error": None
         }), 200
 
     except Exception as e:

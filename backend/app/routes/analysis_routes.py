@@ -12,15 +12,22 @@ def analyze(post_id):
     result = analyze_post_with_regression(post_id)
 
     if not result:
-        return jsonify({"error": "No hay suficientes métricas"}), 400
+        return jsonify({
+            "success": False,
+            "data": None,
+            "error": "No hay suficientes métricas"
+        }), 400
 
-    # 👇 NUEVO: guardar resultado
     save_analysis_result(
         post_id=post_id,
         score=result["predicted_score"]
     )
 
-    return jsonify(result), 200
+    return jsonify({
+        "success": True,
+        "data": result,
+        "error": None
+    }), 200
 
 @analysis_bp.route("/posts/<int:post_id>/analysis/history", methods=["GET"])
 def analysis_history(post_id):
