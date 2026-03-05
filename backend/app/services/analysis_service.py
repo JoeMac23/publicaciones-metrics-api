@@ -22,9 +22,9 @@ def analyze_post_with_regression(post_id):
     return {
         "predicted_score": round(predicted_score, 2),
         "coefficients": {
-            "likes": model.coef_[0],
-            "comments": model.coef_[1],
-            "shares": model.coef_[2]
+            "likes": round(model.coef_[0], 4),
+            "comments": round(model.coef_[1], 4),
+            "shares": round(model.coef_[2], 4)
         }
     }
     

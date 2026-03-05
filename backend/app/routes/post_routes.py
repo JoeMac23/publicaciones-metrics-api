@@ -17,6 +17,45 @@ post_bp = Blueprint("posts", __name__)
 # ======================
 @post_bp.route("/posts", methods=["POST"])
 def create():
+    """
+    Crear un nuevo post
+    ---
+    tags:
+      - Posts
+    parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          type: object
+          required:
+            - user_id
+            - content
+            - platform
+          properties:
+            user_id:
+              type: integer
+              example: 1
+            content:
+              type: string
+              example: "Este es un post de prueba"
+            platform:
+              type: string
+              example: "facebook"
+
+    responses:
+      201:
+        description: Post creado correctamente
+        examples:
+          application/json:
+            success: true
+            data:
+              message: "Post creado correctamente"
+            error: null
+
+      400:
+        description: Error en los datos enviados
+    """
     data = request.get_json()
 
     user_id = data.get("user_id")
@@ -24,14 +63,17 @@ def create():
     platform = data.get("platform")
 
     if not all([user_id, content, platform]):
-        return jsonify({"error": "Faltan campos obligatorios"}), 400
+        return jsonify({
+            "success": False,
+            "data": None,
+            "error": "Faltan campos obligatorios"
+        }), 400
 
     create_post(user_id, content, platform)
+
     return jsonify({
         "success": True,
-        "data": {
-            "message": "Post creado correctamente"
-        },
+        "data": {"message": "Post creado correctamente"},
         "error": None
     }), 201
 
