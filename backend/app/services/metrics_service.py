@@ -28,11 +28,10 @@ def get_metrics_by_post(post_id):
             (post_id,)
         )
         rows = cursor.fetchall()
-        columns = [col[0] for col in cursor.description]
 
     conn.close()
 
-    return [dict(zip(columns, row)) for row in rows]
+    return rows
 
 def get_all_metrics():
     conn = get_connection()
