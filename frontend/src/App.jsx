@@ -38,48 +38,73 @@ function App() {
   };
 
   return (
+  <div className="min-h-screen bg-gray-100 p-8">
 
-    <div style={{ padding: "20px" }}>
+    <h1 className="text-4xl font-bold mb-8 text-gray-800">
+      Social Media Analytics Dashboard
+    </h1>
 
-      <h1 className="text-4x1 font-bold text-blue-600">Social Media Analytics Dashboard</h1>
+    <div className="bg-white shadow-md rounded-lg p-6">
 
-      <h2>Posts</h2>
+      <h2 className="text-2xl font-semibold mb-4">
+        Posts
+      </h2>
 
       {posts.length === 0 ? (
         <p>No posts found</p>
       ) : (
 
-        <ul>
-          {posts.map((post) => (
+        <table className="w-full border-collapse">
 
-            <li key={post.id_posts}>
+          <thead>
+            <tr className="bg-gray-200 text-left">
+              <th className="p-3">ID</th>
+              <th className="p-3">Content</th>
+              <th className="p-3">Platform</th>
+              <th className="p-3">Score</th>
+              <th className="p-3">Action</th>
+            </tr>
+          </thead>
 
-              <strong>ID:</strong> {post.id_posts} <br/>
-              <strong>Content:</strong> {post.content} <br/>
-              <strong>Platform:</strong> {post.platform} <br/><br/>
+          <tbody>
 
-              <button onClick={() => runAnalysis(post.id_posts)}>
-                Run Analysis
-              </button>
+            {posts.map((post) => (
 
-              {scores[post.id_posts] && (
-                <p>
-                  <strong>Predicted Score:</strong> {scores[post.id_posts]}
-                </p>
-              )}
+              <tr key={post.id_posts} className="border-t">
 
-              <hr/>
+                <td className="p-3">{post.id_posts}</td>
+                <td className="p-3">{post.content}</td>
+                <td className="p-3">{post.platform}</td>
 
-            </li>
+                <td className="p-3">
+                  {scores[post.id_posts] || "-"}
+                </td>
 
-          ))}
-        </ul>
+                <td className="p-3">
+
+                  <button
+                    onClick={() => runAnalysis(post.id_posts)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                  >
+                    Run Analysis
+                  </button>
+
+                </td>
+
+              </tr>
+
+            ))}
+
+          </tbody>
+
+        </table>
 
       )}
 
     </div>
 
-  );
+  </div>
+);
 }
 
 export default App;
