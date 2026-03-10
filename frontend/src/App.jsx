@@ -41,7 +41,7 @@ function App() {
 
     <div style={{ padding: "20px" }}>
 
-      <h1>Social Media Analytics Dashboard</h1>
+      <h1 className="text-4x1 font-bold text-blue-600">Social Media Analytics Dashboard</h1>
 
       <h2>Posts</h2>
 
