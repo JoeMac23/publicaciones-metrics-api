@@ -31,7 +31,7 @@ function App() {
 
         const predictedScore = response.data.data.predicted_score;
 
-console.log("Score recibido:", predictedScore, "Post:", postId);
+        console.log("Score recibido:", predictedScore, "Post:", postId);
 
         setScores((prev) => ({
           ...prev,
@@ -50,6 +50,10 @@ console.log("Score recibido:", predictedScore, "Post:", postId);
 
   const loadMetrics = (postId) => {
 
+    if (!postId || Array.isArray(postId)) return;  
+
+    console.log("loadMetrics called with:", postId);
+
     axios.get(`http://localhost:5000/metrics/${postId}`)
       .then((response) => {
 
@@ -65,6 +69,10 @@ console.log("Score recibido:", predictedScore, "Post:", postId);
   };
 
   const loadHistory = (postId) => {
+
+    if (!postId || Array.isArray(postId)) return; 
+
+    console.log("loadHistory called with:", postId);
 
     axios.get(`http://localhost:5000/posts/${postId}/analysis/history`)
       .then((response) => {
