@@ -10,7 +10,8 @@ function App() {
   const [scores, setScores] = useState({});
   const [metrics, setMetrics] = useState([]);
   const [history, setHistory] = useState([]);
-  const [selectedPost, setSelectedPost] = useState([]);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [platformFilter, setPlatformFilter] = useState("All");
 
   useEffect(() => {
 
@@ -50,7 +51,7 @@ function App() {
 
   const loadMetrics = (postId) => {
 
-    if (!postId || Array.isArray(postId)) return;  
+    if (!postId || Array.isArray(postId)) return;
 
     console.log("loadMetrics called with:", postId);
 
@@ -70,7 +71,7 @@ function App() {
 
   const loadHistory = (postId) => {
 
-    if (!postId || Array.isArray(postId)) return; 
+    if (!postId || Array.isArray(postId)) return;
 
     console.log("loadHistory called with:", postId);
 
@@ -97,6 +98,14 @@ function App() {
 
   }, [selectedPost]);
 
+  const filteredPosts =
+    platformFilter === "All"
+      ? posts
+      : posts.filter(
+        (post) =>
+          post.platform &&
+          post.platform.toLowerCase() === platformFilter.toLowerCase()
+      );
   return (
     <div className="min-h-screen bg-gray-100 p-8">
 
@@ -111,6 +120,38 @@ function App() {
         <h2 className="text-2xl font-semibold mb-4">
           Posts
         </h2>
+
+        <div className="flex gap-4 mb-4">
+
+          <button
+            onClick={() => setPlatformFilter("All")}
+            className="px-4 py-2 bg-gray-300 rounded"
+          >
+            All
+          </button>
+
+          <button
+            onClick={() => setPlatformFilter("Facebook")}
+            className="px-4 py-2 bg-blue-500 text-white rounded"
+          >
+            Facebook
+          </button>
+
+          <button
+            onClick={() => setPlatformFilter("Instagram")}
+            className="px-4 py-2 bg-pink-500 text-white rounded"
+          >
+            Instagram
+          </button>
+
+          <button
+            onClick={() => setPlatformFilter("Twitter")}
+            className="px-4 py-2 bg-sky-500 text-white rounded"
+          >
+            Twitter
+          </button>
+
+        </div>
 
         {posts.length === 0 ? (
           <p>No posts found</p>
@@ -130,7 +171,7 @@ function App() {
 
             <tbody>
 
-              {posts.map((post) => (
+              {filteredPosts.map((post) => (
 
                 <tr
                   key={post.id_posts}
