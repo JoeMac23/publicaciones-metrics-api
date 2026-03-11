@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import MetricsChart from "./components/MetricsChart";
 import AnalysisHistory from "./components/AnalysisHistory";
+import MetricsCards from "./components/MetricCards";
 
 function App() {
 
@@ -62,19 +63,19 @@ function App() {
 
   const loadHistory = (postId) => {
 
-  axios.get(`http://localhost:5000/posts/${postId}/analysis/history`)
-    .then((response) => {
+    axios.get(`http://localhost:5000/posts/${postId}/analysis/history`)
+      .then((response) => {
 
-      setHistory(response.data);
+        setHistory(response.data);
 
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
 
-      console.error("Error loading history:", error);
+        console.error("Error loading history:", error);
 
-    });
+      });
 
-};
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -82,6 +83,8 @@ function App() {
       <h1 className="text-4xl font-bold mb-8 text-gray-800">
         Social Media Analytics Dashboard
       </h1>
+
+      <MetricsCards metrics={metrics} />
 
       <div className="bg-white shadow-md rounded-lg p-6">
 
@@ -116,7 +119,13 @@ function App() {
                   <td className="p-3">{post.platform}</td>
 
                   <td className="p-3">
-                    {scores[post.id_posts] || "-"}
+                    {scores[post.id_posts] ? (
+                      <span className="bg-green-500 text-white px-3 py-1 rounded">
+                        {scores[post.id_posts]}
+                      </span>
+                    ) : (
+                      "-"
+                    )}
                   </td>
 
                   <td className="p-3">
