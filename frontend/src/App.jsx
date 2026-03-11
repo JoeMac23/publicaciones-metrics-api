@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import MetricsChart from "./components/MetricsChart";
+import AnalysisHistory from "./components/AnalysisHistory";
 
 function App() {
 
   const [posts, setPosts] = useState([]);
   const [scores, setScores] = useState({});
   const [metrics, setMetrics] = useState([]);
+  const [history, setHistory] = useState([]);
 
   useEffect(() => {
 
@@ -33,6 +35,7 @@ function App() {
         }));
 
         loadMetrics(postId);
+        loadHistory(postId);
 
       })
       .catch((error) => {
@@ -56,6 +59,22 @@ function App() {
       });
 
   };
+
+  const loadHistory = (postId) => {
+
+  axios.get(`http://localhost:5000/posts/${postId}/analysis/history`)
+    .then((response) => {
+
+      setHistory(response.data);
+
+    })
+    .catch((error) => {
+
+      console.error("Error loading history:", error);
+
+    });
+
+};
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -134,6 +153,7 @@ function App() {
       </div>
 
       <MetricsChart metrics={metrics} />
+      <AnalysisHistory history={history} />
 
     </div>
   );
