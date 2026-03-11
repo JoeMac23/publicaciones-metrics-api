@@ -10,6 +10,7 @@ function App() {
   const [scores, setScores] = useState({});
   const [metrics, setMetrics] = useState([]);
   const [history, setHistory] = useState([]);
+  const [selectedPost, setSelectedPost] = useState([]);
 
   useEffect(() => {
 
@@ -29,6 +30,8 @@ function App() {
       .then((response) => {
 
         const predictedScore = response.data.data.predicted_score;
+
+console.log("Score recibido:", predictedScore, "Post:", postId);
 
         setScores((prev) => ({
           ...prev,
@@ -77,6 +80,15 @@ function App() {
 
   };
 
+  useEffect(() => {
+
+    if (!selectedPost) return;
+
+    loadMetrics(selectedPost);
+    loadHistory(selectedPost);
+
+  }, [selectedPost]);
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
 
@@ -112,7 +124,11 @@ function App() {
 
               {posts.map((post) => (
 
-                <tr key={post.id_posts} className="border-t">
+                <tr
+                  key={post.id_posts}
+                  className="border-t hover:bg-gray-100 cursor-pointer"
+                  onClick={() => setSelectedPost(post.id_posts)}
+                >
 
                   <td className="p-3">{post.id_posts}</td>
                   <td className="p-3">{post.content}</td>
@@ -130,7 +146,7 @@ function App() {
 
                   <td className="p-3">
 
-                    {scores[post.id_posts] ? (
+                    {scores[post.id_posts] && selectedPost === post.id_posts ? (
 
                       <span className="bg-green-500 text-white px-3 py-1 rounded">
                         Score Ready
