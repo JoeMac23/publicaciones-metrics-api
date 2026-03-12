@@ -106,6 +106,16 @@ function App() {
           post.platform &&
           post.platform.toLowerCase() === platformFilter.toLowerCase()
       );
+
+  const getScoreColor = (score) => {
+
+    if (score >= 200) return "bg-green-500";
+    if (score >= 100) return "bg-orange-500";
+
+    return "bg-red-500";
+
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
 
@@ -185,7 +195,7 @@ function App() {
 
                   <td className="p-3">
                     {scores[post.id_posts] ? (
-                      <span className="bg-green-500 text-white px-3 py-1 rounded">
+                      <span className={`${getScoreColor(scores[post.id_posts])} text-white px-3 py-1 rounded`}>
                         {scores[post.id_posts]}
                       </span>
                     ) : (
@@ -194,13 +204,10 @@ function App() {
                   </td>
 
                   <td className="p-3">
-
                     {scores[post.id_posts] && selectedPost === post.id_posts ? (
-
                       <span className="bg-green-500 text-white px-3 py-1 rounded">
                         Score Ready
                       </span>
-
                     ) : (
 
                       <button
