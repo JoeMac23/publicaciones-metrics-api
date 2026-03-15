@@ -13,6 +13,7 @@ function App() {
   const [history, setHistory] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [platformFilter, setPlatformFilter] = useState("All");
+  const [loadingPosts, setLoadingPosts] = useState({});
 
   const loadPosts = () => {
 
@@ -39,12 +40,15 @@ function App() {
 
   const runAnalysis = (postId) => {
 
+    setLoadingPosts((prev) => ({
+      ...prev,
+      [postId]: true
+    }));
+
     axios.get(`http://localhost:5000/posts/${postId}/analysis/regression`)
       .then((response) => {
 
         const predictedScore = response.data.data.predicted_score;
-
-        console.log("Score recibido:", predictedScore, "Post:", postId);
 
         setScores((prev) => ({
           ...prev,
@@ -57,6 +61,14 @@ function App() {
       })
       .catch((error) => {
         console.error("Error running analysis:", error);
+      })
+      .finally(() => {
+
+        setLoadingPosts((prev) => ({
+          ...prev,
+          [postId]: false
+        }));
+
       });
 
   };
@@ -184,12 +196,46 @@ function App() {
 
   };
 
+
+  const totalPosts = posts.length;
+
+  const scoreValues = Object.values(scores);
+
+  const averageScore =
+    scoreValues.length > 0
+      ? Math.round(scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length)
+      : 0;
+
+  const bestScore =
+    scoreValues.length > 0
+      ? Math.max(...scoreValues)
+      : 0;
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
 
       <h1 className="text-4xl font-bold mb-8 text-gray-800">
         Social Media Analytics Dashboard
       </h1>
+
+      <div className="grid grid-cols-3 gap-6 mb-8">
+
+        <div className="bg-white shadow-md rounded-lg p-6 text-center">
+          <h3 className="text-gray-500 text-sm">Total Posts</h3>
+          <p className="text-3xl font-bold">{totalPosts}</p>
+        </div>
+
+        <div className="bg-white shadow-md rounded-lg p-6 text-center">
+          <h3 className="text-gray-500 text-sm">Average Score</h3>
+          <p className="text-3xl font-bold">{averageScore}</p>
+        </div>
+
+        <div className="bg-white shadow-md rounded-lg p-6 text-center">
+          <h3 className="text-gray-500 text-sm">Best Score</h3>
+          <p className="text-3xl font-bold">{bestScore}</p>
+        </div>
+
+      </div>
 
       <MetricsCards metrics={metrics} />
 
@@ -296,10 +342,18 @@ function App() {
                   </td>
 
                   <td className="p-3">
-                    {scores[post.id_posts] && selectedPost === post.id_posts ? (
+                    {loadingPosts[post.id_posts] ? (
+
+                      <span className="bg-yellow-500 text-white px-4 py-2 rounded">
+                        Analyzing...
+                      </span>
+
+                    ) : scores[post.id_posts] && selectedPost === post.id_posts ? (
+
                       <span className="bg-green-500 text-white px-3 py-1 rounded">
                         Score Ready
                       </span>
+
                     ) : (
 
                       <button
