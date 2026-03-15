@@ -117,6 +117,12 @@ function App() {
 
   };
 
+  const bestPostId = Object.keys(scores).length
+    ? Object.entries(scores).reduce((best, current) =>
+      current[1] > best[1] ? current : best
+    )[0]
+    : null;
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
 
@@ -186,7 +192,10 @@ function App() {
 
                 <tr
                   key={post.id_posts}
-                  className="border-t hover:bg-gray-100 cursor-pointer"
+                  className={`border-t cursor-pointer ${post.id_posts == bestPostId
+                      ? "bg-yellow-100 hover:bg-yellow-200"
+                      : "hover:bg-gray-100"
+                    }`}
                   onClick={() => setSelectedPost(post.id_posts)}
                 >
 
