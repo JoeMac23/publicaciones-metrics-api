@@ -108,6 +108,16 @@ function App() {
           post.platform.toLowerCase() === platformFilter.toLowerCase()
       );
 
+
+  const sortedPosts = [...filteredPosts].sort((a, b) => {
+
+    const scoreA = scores[a.id_posts] || 0;
+    const scoreB = scores[b.id_posts] || 0;
+
+    return scoreB - scoreA;
+
+  });
+
   const getScoreColor = (score) => {
 
     if (score >= 200) return "bg-green-500";
@@ -188,18 +198,27 @@ function App() {
 
             <tbody>
 
-              {filteredPosts.map((post) => (
+              {sortedPosts.map((post) => (
 
                 <tr
                   key={post.id_posts}
                   className={`border-t cursor-pointer ${post.id_posts == bestPostId
-                      ? "bg-yellow-100 hover:bg-yellow-200"
-                      : "hover:bg-gray-100"
+                    ? "bg-yellow-100 hover:bg-yellow-200"
+                    : "hover:bg-gray-100"
                     }`}
                   onClick={() => setSelectedPost(post.id_posts)}
                 >
 
-                  <td className="p-3">{post.id_posts}</td>
+                  <td className="p-3">
+                    {post.id_posts}
+
+                    {post.id_posts == bestPostId && (
+                      <span className="ml-2 text-yellow-600 font-bold">
+                        🏆
+                      </span>
+                    )}
+
+                  </td>
                   <td className="p-3">{post.content}</td>
                   <td className="p-3">{post.platform}</td>
 
