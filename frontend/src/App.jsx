@@ -157,6 +157,33 @@ function App() {
     )[0]
     : null;
 
+  const exportCSV = () => {
+
+    const headers = ["Post ID", "Platform", "Score"];
+
+    const rows = sortedPosts.map((post) => [
+      post.id_posts,
+      post.platform,
+      scores[post.id_posts] || "-"
+    ]);
+
+    const csvContent =
+      [headers, ...rows]
+        .map((row) => row.join(","))
+        .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv" });
+
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "post_analysis_report.csv";
+
+    link.click();
+
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
 
@@ -171,6 +198,13 @@ function App() {
         <h2 className="text-2xl font-semibold mb-4">
           Posts
         </h2>
+
+        <button
+          onClick={exportCSV}
+          className="mb-4 bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        >
+          Export CSV
+        </button>
 
         <p className="text-sm text-gray-500 mb-4">
           Auto-refresh every 30 seconds
