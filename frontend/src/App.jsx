@@ -3,6 +3,7 @@ import axios from "axios";
 import MetricsChart from "./components/MetricsChart";
 import AnalysisHistory from "./components/AnalysisHistory";
 import MetricsCards from "./components/MetricCards";
+import ScoreHistoryChart from "./components/ScoreHistoryChart";
 
 function App() {
 
@@ -234,6 +235,7 @@ function App() {
       </div>
 
       <MetricsChart metrics={metrics} />
+      <AnalysisHistory history={history} />
       <AnalysisHistory history={history} />
 
     </div>
