@@ -14,15 +14,26 @@ function App() {
   const [selectedPost, setSelectedPost] = useState(null);
   const [platformFilter, setPlatformFilter] = useState("All");
 
-  useEffect(() => {
+  const loadPosts = () => {
 
     axios.get("http://localhost:5000/posts")
       .then((response) => {
+
         setPosts(response.data.data);
+
       })
       .catch((error) => {
+
         console.error("Error fetching posts:", error);
+
       });
+
+  };
+
+
+  useEffect(() => {
+
+    loadPosts();
 
   }, []);
 
@@ -99,6 +110,19 @@ function App() {
 
   }, [selectedPost]);
 
+  useEffect(() => {
+
+    const interval = setInterval(() => {
+
+      loadPosts();
+
+    }, 30000);
+
+    return () => clearInterval(interval);
+
+  }, []);
+
+
   const filteredPosts =
     platformFilter === "All"
       ? posts
@@ -147,6 +171,11 @@ function App() {
         <h2 className="text-2xl font-semibold mb-4">
           Posts
         </h2>
+
+        <p className="text-sm text-gray-500 mb-4">
+          Auto-refresh every 30 seconds
+        </p>
+
 
         <div className="flex gap-4 mb-4">
 
