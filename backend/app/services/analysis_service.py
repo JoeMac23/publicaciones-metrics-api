@@ -62,6 +62,7 @@ def get_analysis_by_post(post_id):
 
 def get_analysis_history(post_id):
     conn = get_connection()
+
     with conn.cursor() as cursor:
         cursor.execute(
             """
@@ -72,9 +73,9 @@ def get_analysis_history(post_id):
             """,
             (post_id,)
         )
+
         rows = cursor.fetchall()
-        columns = [col[0] for col in cursor.description]
 
     conn.close()
 
-    return [dict(zip(columns, row)) for row in rows]
+    return rows
